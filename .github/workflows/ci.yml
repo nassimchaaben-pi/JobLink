@@ -1,0 +1,32 @@
+name: JobLink CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Frontend Deps
+        run: cd frontend && npm install
+      - name: Build Frontend
+        run: cd frontend && npm run build -- --configuration production
+
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Backend Deps
+        run: cd backend && npm install
+      - name: Run Backend Tests
+        run: cd backend && npm test
