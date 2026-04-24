@@ -1,0 +1,153 @@
+<section class="recruiter-shell">
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Recruiter Command Center</p>
+      <h1>Talent pipeline at a glance</h1>
+      <p>
+        Publish roles, monitor candidate quality, and accelerate hiring with AI-assisted insights.
+      </p>
+      <div class="hero-actions">
+        <button class="btn primary" (click)="createJob()" [disabled]="creatingJob">
+          {{ creatingJob ? 'Creating...' : 'Publish role' }}
+        </button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img [src]="heroImage" alt="Recruitment team planning" />
+      <div class="status-chip">{{ loading ? 'Syncing recruiter data...' : 'Live pipeline connected' }}</div>
+    </div>
+  </header>
+
+  <section class="kpi-grid">
+    @for (kpi of kpis; track kpi.label) {
+      <article class="kpi-card">
+        <span>{{ kpi.label }}</span>
+        <strong>{{ kpi.value }}</strong>
+        <small>{{ kpi.trend }}</small>
+      </article>
+    }
+  </section>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (successMessage) {
+    <p class="success">{{ successMessage }}</p>
+  }
+
+  <p class="meta">Signed in as: {{ email }}</p>
+
+  <section class="layout-grid">
+    <article class="panel">
+      <h2>Create Job</h2>
+      <div class="grid two">
+        <label>
+          Title
+          <input [(ngModel)]="jobForm.title" type="text" />
+        </label>
+        <label>
+          Company
+          <input [(ngModel)]="jobForm.company" type="text" />
+        </label>
+        <label>
+          Location
+          <input [(ngModel)]="jobForm.location" type="text" />
+        </label>
+        <label>
+          Employment type
+          <select [(ngModel)]="jobForm.employmentType">
+            <option value="full-time">full-time</option>
+            <option value="internship">internship</option>
+            <option value="part-time">part-time</option>
+          </select>
+        </label>
+        <label>
+          Salary range
+          <input [(ngModel)]="jobForm.salaryRange" type="text" />
+        </label>
+        <label>
+          Status
+          <select [(ngModel)]="jobForm.status">
+            <option value="published">published</option>
+            <option value="draft">draft</option>
+          </select>
+        </label>
+      </div>
+      <label>
+        Description
+        <textarea [(ngModel)]="jobForm.description" rows="3"></textarea>
+      </label>
+      <label>
+        Required skills (comma separated)
+        <input [(ngModel)]="jobForm.requiredSkillsInput" type="text" />
+      </label>
+      <button class="btn primary" [disabled]="creatingJob" (click)="createJob()">
+        {{ creatingJob ? 'Creating...' : 'Create job' }}
+      </button>
+    </article>
+
+    <article class="panel image-panel">
+      <h2>Hiring Momentum</h2>
+      <img [src]="officeImage" alt="Hiring team reviewing applicants" />
+      <p class="muted">Team throughput increased 18% after enabling AI matching filters and stage automation.</p>
+      <div class="pipeline-list">
+        @for (stage of pipeline; track stage.stage) {
+          <div class="pipeline-item">
+            <span>{{ stage.stage }}</span>
+            <strong>{{ stage.count }}</strong>
+            <div class="bar"><i [style.width.%]="stage.count * 2" [style.background]="stage.color"></i></div>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+
+  <article class="panel">
+    <h2>Your Jobs</h2>
+    <div class="cards-grid">
+      @for (job of jobs; track job.id) {
+        <article class="item-card">
+          <h3>{{ job.title }}</h3>
+          <p class="muted">{{ job.company }} · {{ job.location }}</p>
+          <p>{{ job.description }}</p>
+          <p class="muted">{{ job.employmentType }} · {{ job.status }} · {{ job.salaryRange }}</p>
+          <div class="tags">
+            @for (skill of job.requiredSkills; track skill) {
+              <span>{{ skill }}</span>
+            }
+          </div>
+          <button class="btn" (click)="viewApplications(job.id)">View applications</button>
+        </article>
+      }
+    </div>
+  </article>
+
+  <article class="panel">
+    <h2>Applications for Selected Job</h2>
+    @if (!selectedJobId) {
+      <p class="muted">Select a job to inspect applications.</p>
+    } @else if (!selectedJobApplications.length) {
+      <p class="muted">No applications yet for this job.</p>
+    } @else {
+      <div class="cards-grid">
+        @for (application of selectedJobApplications; track application.id) {
+          <article class="item-card">
+            <h3>Application #{{ application.id }}</h3>
+            <p class="muted">Current status: {{ application.status }}</p>
+            <label>
+              Update status
+              <select #statusSelect>
+                <option value="screening">screening</option>
+                <option value="interview">interview</option>
+                <option value="offer">offer</option>
+                <option value="rejected">rejected</option>
+              </select>
+            </label>
+            <button class="btn" (click)="updateApplication(application.id, statusSelect.value)">Update</button>
+          </article>
+        }
+      </div>
+    }
+  </article>
+</section>

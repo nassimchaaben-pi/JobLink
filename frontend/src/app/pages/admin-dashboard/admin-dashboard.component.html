@@ -1,0 +1,118 @@
+<section class="admin-shell">
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Control tower</p>
+      <h1>Platform Operations Dashboard</h1>
+      <p>
+        Monitor growth, conversion, moderation signals, and user activity with real-time intelligence.
+      </p>
+      <p class="meta">Signed in as: {{ email }}</p>
+    </div>
+    <div class="hero-visual">
+      <img [src]="heroImage" alt="Admin team reviewing analytics" />
+      <div class="status-chip">{{ loading ? 'Syncing admin data...' : 'Analytics stream online' }}</div>
+    </div>
+  </header>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (metrics) {
+    <section class="stats-grid">
+      <article class="stat"><span>Users</span><strong>{{ metrics.usersCount }}</strong></article>
+      <article class="stat"><span>Profiles</span><strong>{{ metrics.candidateProfilesCount }}</strong></article>
+      <article class="stat"><span>Jobs</span><strong>{{ metrics.jobsCount }}</strong></article>
+      <article class="stat"><span>Applications</span><strong>{{ metrics.applicationsCount }}</strong></article>
+      <article class="stat"><span>Interviews</span><strong>{{ metrics.interviewSessionsCount }}</strong></article>
+      <article class="stat"><span>Chat messages</span><strong>{{ metrics.chatMessagesCount }}</strong></article>
+    </section>
+  }
+
+  <section class="layout-grid">
+    <article class="panel chart-panel">
+      <h2>Weekly Growth Trend</h2>
+      <div class="chart-bars">
+        @for (value of growthSeries; track $index) {
+          <div class="bar-group">
+            <div
+              class="bar"
+              [style.height.%]="(value / maxSeriesValue(growthSeries)) * 100"
+              title="{{ weeklyLabels[$index] }}: {{ value }}"
+            ></div>
+            <span>{{ weeklyLabels[$index] }}</span>
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="panel chart-panel">
+      <h2>Application Conversion</h2>
+      <div class="chart-lines">
+        @for (value of conversionSeries; track $index) {
+          <div class="line-item">
+            <span>{{ weeklyLabels[$index] }}</span>
+            <div class="line-track">
+              <i [style.width.%]="(value / maxSeriesValue(conversionSeries)) * 100"></i>
+            </div>
+            <strong>{{ value }}%</strong>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+
+  <section class="layout-grid">
+    <article class="panel">
+      <h2>Source Breakdown</h2>
+      <div class="source-list">
+        @for (source of sourceBreakdown; track source.source) {
+          <div class="source-item">
+            <span>{{ source.source }}</span>
+            <div class="source-bar"><i [style.width.%]="source.value" [style.background]="source.color"></i></div>
+            <strong>{{ source.value }}%</strong>
+          </div>
+        }
+      </div>
+      <img [src]="mapImage" alt="Regional analytics map" />
+    </article>
+
+    <article class="panel">
+      <h2>Moderation Signals</h2>
+      <ul class="signals">
+        @for (signal of flaggedSignals; track signal) {
+          <li>{{ signal }}</li>
+        }
+      </ul>
+      <p class="muted">Last scan: {{ (users[0]?.createdAt || '') | date: 'shortTime' }}</p>
+    </article>
+  </section>
+
+  <article class="panel">
+    <h2>Users</h2>
+    @if (!users.length) {
+      <p class="muted">No users registered yet.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.id) {
+            <tr>
+              <td>{{ user.id }}</td>
+              <td>{{ user.email }}</td>
+              <td><span class="role-pill">{{ user.role }}</span></td>
+              <td>{{ user.createdAt | date: 'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </article>
+</section>

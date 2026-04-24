@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  passwordHash     String
+  role             String
+  createdAt        DateTime          @default(now())
+  candidateProfile CandidateProfile?
+  recruiterJobs    Job[]
+  applications     Application[]
+  chatSessions     ChatSession[]
+  interviewSession InterviewSession[]
+}
+
+model CandidateProfile {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  fullName  String   @default("")
+  headline  String   @default("")
+  location  String   @default("")
+  bio       String   @db.Text
+  skills    Json
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id             Int           @id @default(autoincrement())
+  recruiterId    Int
+  title          String
+  company        String
+  location       String        @default("")
+  employmentType String        @default("full-time")
+  salaryRange    String        @default("")
+  description    String        @db.Text
+  requiredSkills Json
+  status         String        @default("draft")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  recruiter      User          @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  applications   Application[]
+}
+
+model Application {
+  id              Int      @id @default(autoincrement())
+  jobId           Int
+  candidateUserId Int
+  status          String   @default("applied")
+  history         Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  job             Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate       User     @relation(fields: [candidateUserId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, candidateUserId])
+}
+
+model ChatSession {
+  id        Int           @id @default(autoincrement())
+  userId    Int
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id        Int         @id @default(autoincrement())
+  sessionId Int
+  sender    String
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model InterviewSession {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  roleTarget String   @default("Software Engineer")
+  levelTarget String  @default("Junior")
+  questions  Json
+  answers    Json
+  feedback   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

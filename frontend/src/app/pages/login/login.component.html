@@ -1,0 +1,38 @@
+<section class="login-shell">
+  <h1>{{ mode === 'login' ? 'Login' : 'Create account' }}</h1>
+  <p>Use your JobLink account to continue.</p>
+  <p class="hint">Important: select the same role as the account role.</p>
+
+  <form (ngSubmit)="submit()">
+    <label>
+      Email
+      <input type="email" name="email" [(ngModel)]="email" placeholder="you@example.com" required />
+    </label>
+
+    <label>
+      Password
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Your password" required />
+    </label>
+
+    <label>
+      Role
+      <select name="role" [(ngModel)]="role">
+        <option value="candidate">Candidate</option>
+        <option value="recruiter">Recruiter</option>
+        <option value="admin">Admin</option>
+      </select>
+    </label>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Please wait...' : mode === 'login' ? 'Login' : 'Create account' }}
+    </button>
+
+    <button type="button" (click)="toggleMode()">
+      {{ mode === 'login' ? 'Need an account? Register' : 'Already have an account? Login' }}
+    </button>
+
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
+  </form>
+</section>

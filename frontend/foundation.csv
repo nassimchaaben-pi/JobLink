@@ -1,0 +1,5 @@
+Issue Type,Summary,Description,Priority,Status,Labels,Epic Name,Epic Link
+Epic,Foundation and Architecture,"Core backend structure and system foundation",High,Done,backend;architecture,Foundation and Architecture,
+Story,Backend modular architecture bootstrap,"Refactor backend into modular structure",High,Done,backend;architecture,,Foundation and Architecture
+Story,Environment and health-check setup,"Add env config and health endpoints",High,Done,backend;config;observability,,Foundation and Architecture
+Story,Persistence strategy with DB-ready fallback,"Prisma + memory fallback",High,Done,backend;prisma;persistence;demo,,Foundation and Architecture

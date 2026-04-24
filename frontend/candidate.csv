@@ -1,0 +1,5 @@
+Issue Type,Summary,Description,Priority,Status,Labels,Epic Name,Epic Link
+Epic,Candidate Experience,"Candidate workflows",High,Done,candidate,Candidate Experience,
+Story,Candidate profile management,"Profile APIs + UI",High,Done,candidate;profile;api;frontend,,Candidate Experience
+Story,Job discovery and applications flow,"Search + apply flow",High,Done,candidate;jobs;applications,,Candidate Experience
+Story,Candidate dashboard premium demo UX,"UI redesign",Medium,Done,ui;ux;candidate;demo,,Candidate Experience

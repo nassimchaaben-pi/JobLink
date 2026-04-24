@@ -1,0 +1,5 @@
+Issue Type,Summary,Description,Priority,Status,Labels,Epic Name,Epic Link
+Epic,AI Features,"AI modules",High,Done,ai,AI Features,
+Story,AI matching module,"CV matching",High,Done,ai;matching;nlp-mvp,,AI Features
+Story,Assistant chatbot module,"Chat UI + API",High,Done,ai;assistant;chatbot,,AI Features
+Story,Interview simulation module,"Mock interviews",High,Done,ai;interview;simulation,,AI Features
