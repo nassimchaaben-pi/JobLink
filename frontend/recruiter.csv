@@ -1,0 +1,4 @@
+Issue Type,Summary,Description,Priority,Status,Labels,Epic Name,Epic Link
+Epic,Recruiter Experience,"Recruiter workflows",High,Done,recruiter,Recruiter Experience,
+Story,Recruiter jobs CRUD-lite,"Jobs + pipeline",High,Done,recruiter;jobs;pipeline,,Recruiter Experience
+Story,Recruiter dashboard premium demo UX,"Dashboard redesign",Medium,Done,ui;ux;recruiter;demo,,Recruiter Experience

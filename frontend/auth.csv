@@ -1,0 +1,4 @@
+Issue Type,Summary,Description,Priority,Status,Labels,Epic Name,Epic Link
+Epic,Authentication and Access Control,"Auth and RBAC",High,Done,auth;security,Authentication and Access Control,
+Story,Auth API and JWT session management,"JWT login/register/me",High,Done,backend;auth;security,,Authentication and Access Control
+Story,Role-based route protection,"RBAC enforcement",High,Done,auth;rbac;frontend;backend,,Authentication and Access Control

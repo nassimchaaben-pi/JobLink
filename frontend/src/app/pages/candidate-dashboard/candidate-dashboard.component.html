@@ -1,0 +1,172 @@
+<section class="candidate-shell">
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Candidate cockpit</p>
+      <h1>Welcome back, {{ profileForm.fullName }}</h1>
+      <p>
+        Keep your profile sharp, track opportunities, and prepare interviews in one smart workspace.
+      </p>
+      <div class="hero-actions">
+        <button class="btn primary" (click)="saveProfile()">Save profile changes</button>
+        <button class="btn" (click)="startInterview()">Start mock interview</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img [src]="heroImage" alt="Team collaboration" />
+      <div class="status-chip">{{ loading ? 'Syncing live data...' : 'Realtime sync active' }}</div>
+    </div>
+  </header>
+
+  <section class="stats-grid">
+    @for (stat of quickStats; track stat.label) {
+      <article class="stat-card">
+        <p>{{ stat.label }}</p>
+        <strong>{{ stat.value }}</strong>
+        <span>{{ stat.trend }}</span>
+      </article>
+    }
+  </section>
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (successMessage) {
+    <p class="success">{{ successMessage }}</p>
+  }
+
+  <section class="layout-grid">
+    <article class="panel profile-panel">
+      <h2>Profile Builder</h2>
+      <p class="muted">Signed in as {{ email }}</p>
+      <div class="grid two">
+        <label>
+          Full name
+          <input [(ngModel)]="profileForm.fullName" type="text" />
+        </label>
+        <label>
+          Headline
+          <input [(ngModel)]="profileForm.headline" type="text" />
+        </label>
+        <label>
+          Location
+          <input [(ngModel)]="profileForm.location" type="text" />
+        </label>
+        <label>
+          Skills (comma separated)
+          <input [(ngModel)]="profileForm.skillsInput" type="text" />
+        </label>
+      </div>
+      <label>
+        Bio
+        <textarea [(ngModel)]="profileForm.bio" rows="4"></textarea>
+      </label>
+      <button class="btn primary" (click)="saveProfile()">Save profile</button>
+    </article>
+
+    <article class="panel coach-panel">
+      <h2>Weekly Coaching Plan</h2>
+      <img [src]="coachImage" alt="Career coach" />
+      <ul>
+        @for (item of learningPlan; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Open Jobs</h2>
+      <input [(ngModel)]="searchTerm" (input)="filterJobs()" placeholder="Search by title, company, location" />
+    </div>
+    <div class="cards-grid">
+      @for (job of filteredJobs; track job.id) {
+        <article class="item-card">
+          <h3>{{ job.title }}</h3>
+          <p class="muted">{{ job.company }} · {{ job.location }}</p>
+          <p>{{ job.description }}</p>
+          <p class="muted">{{ job.employmentType }} · {{ job.salaryRange }}</p>
+          <div class="tags">
+            @for (skill of job.requiredSkills; track skill) {
+              <span>{{ skill }}</span>
+            }
+          </div>
+          @if (hasApplied(job.id)) {
+            <span class="badge applied">Applied</span>
+          } @else {
+            <button class="btn" (click)="applyToJob(job.id)">Apply now</button>
+          }
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="layout-grid">
+    <article class="panel">
+      <h2>AI Matches</h2>
+      <div class="cards-grid">
+        @for (match of matches; track match.job.id) {
+          <article class="item-card">
+            <h3>{{ match.job.title }}</h3>
+            <p class="muted">{{ match.job.company }} · {{ match.job.location }}</p>
+            <p><strong>Score:</strong> {{ match.score }}%</p>
+            <p><strong>Reasons:</strong> {{ match.reasons.join(' | ') }}</p>
+            <p><strong>Gaps:</strong> {{ match.gaps.join(', ') || 'None' }}</p>
+          </article>
+        }
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Application Tracker</h2>
+      <div class="cards-grid">
+        @for (application of applications; track application.id) {
+          <article class="item-card">
+            <h3>{{ application.job?.title }} - {{ application.job?.company }}</h3>
+            <p class="muted">Status: {{ application.status }}</p>
+            <p>Submitted: {{ application.createdAt | date: 'medium' }}</p>
+          </article>
+        }
+      </div>
+    </article>
+  </section>
+
+  <section class="layout-grid">
+    <article class="panel">
+      <h2>AI Assistant</h2>
+      <div class="chat-box">
+        @for (msg of chatHistory; track $index) {
+          <p><strong>{{ msg.sender }}:</strong> {{ msg.content }}</p>
+        }
+      </div>
+      <div class="panel-head">
+        <input [(ngModel)]="chatInput" placeholder="Ask for CV, matching, or interview tips" />
+        <button class="btn" (click)="sendChatMessage()">Send</button>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Interview Simulator</h2>
+      @if (!interviewSession) {
+        <p class="muted">Launch a role-based interview simulation with instant feedback.</p>
+        <button class="btn primary" (click)="startInterview()">Start interview</button>
+      } @else {
+        <p class="muted">Question {{ interviewQuestionIndex + 1 }} / {{ interviewSession.questions.length }}</p>
+        <p>{{ interviewSession.questions[interviewQuestionIndex] }}</p>
+        <textarea [(ngModel)]="interviewAnswer" rows="4" placeholder="Write your answer..."></textarea>
+        <button class="btn" (click)="submitInterviewAnswer()">Submit answer</button>
+
+        @if (interviewFeedback) {
+          <article class="item-card feedback">
+            <h3>Interview Feedback</h3>
+            <p><strong>Score:</strong> {{ interviewFeedback.score }}%</p>
+            <p>{{ interviewFeedback.summary }}</p>
+            <p><strong>Strengths:</strong> {{ interviewFeedback.strengths.join(', ') }}</p>
+            <p><strong>Improvements:</strong> {{ interviewFeedback.improvements.join(', ') }}</p>
+          </article>
+        }
+      }
+    </article>
+  </section>
+</section>
